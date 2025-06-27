@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>XiplareX - Profesyonel Profil</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #000;
+      overflow: hidden;
+      font-family: 'Courier New', monospace;
+    }
+    canvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1;
+    }
+    .profile-container {
+      position: relative;
+      z-index: 10;
+      color: #0F0;
+      padding: 40px;
+      width: 100%;
+      height: 100vh;
+      overflow-y: auto;
+      background: rgba(0, 0, 0, 0.8);
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+      padding-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 3em;
+      margin: 0;
+      text-shadow: 0 0 10px #0F0;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    .header h2 {
+      font-size: 1.5em;
+      margin: 10px 0;
+      color: #00FF00;
+    }
+    .main-table {
+      border: 2px solid #0F0;
+      background: rgba(0, 10, 0, 0.5);
+      border-radius: 10px;
+      padding: 20px;
+      margin: 20px 0;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .section {
+      margin: 20px 0;
+      border: 1px solid #0F0;
+      background: rgba(0, 20, 0, 0.3);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .section-header-table {
+      background: rgba(0, 15, 0, 0.8);
+      border-bottom: 2px solid #0F0;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      z-index: 20;
+    }
+    .section-header-table:hover {
+      background: rgba(0, 255, 0, 0.2);
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    }
+    .section-header-table h3 {
+      color: #00FF00;
+      font-size: 1.8em;
+      margin: 0;
+      text-shadow: 0 0 5px #0F0;
+      text-align: center;
+      position: relative;
+    }
+    .section-header-table h3::after {
+      content: '▼';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.8em;
+      transition: transform 0.3s ease;
+    }
+    .section.collapsed .section-header-table h3::after {
+      transform: translateY(-50%) rotate(-90deg);
+    }
+    .section-content, .skill-category {
+      max-width: 600px;
+      word-break: break-word;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 15px;
+    }
+    .section-content {
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    .section.collapsed .section-content {
+      max-height: 0;
+      opacity: 0;
+      margin: 0;
+      padding: 0;
+    }
+    .section p {
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+    .skill-category {
+      background: rgba(0, 15, 0, 0.5);
+      padding: 15px;
+      border: 1px solid #0F0;
+      border-radius: 5px;
+      width: 100%;
+    }
+    .contact-info {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-top: 20px;
+      flex-wrap: nowrap;
+    }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 15px;
+      background: rgba(0, 15, 0, 0.5);
+      border: 1px solid #0F0;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: #0F0;
+      min-width: 150px;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-item:hover {
+      background: rgba(0, 255, 0, 0.2);
+      border-color: #00FF00;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+      transform: translateY(-2px);
+    }
+    .contact-item:active {
+      transform: translateY(0);
+    }
+    .contact-item i {
+      margin-right: 10px;
+      font-size: 1.2em;
+    }
+    .contact-item span {
+      font-weight: bold;
+    }
+    .experience-item {
+      margin: 15px 0;
+      padding: 15px;
+      background: rgba(0, 15, 0, 0.3);
+      border-left: 3px solid #0F0;
+    }
+    .experience-item h4 {
+      color: #00FF00;
+      margin: 0 0 5px 0;
+    }
+    .experience-item p {
+      margin: 5px 0;
+      color: #CCFFCC;
+    }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #0F0;
+      }
+      to {
+        text-shadow: 0 0 20px #0F0, 0 0 30px #0F0;
+      }
+    }
+    .language-switcher {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 30;
+      display: flex;
+      gap: 10px;
+    }
+    .lang-btn {
+      background: rgba(0, 15, 0, 0.8);
+      border: 1px solid #0F0;
+      color: #0F0;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Courier New', monospace;
+      font-size: 14px;
+    }
+    .lang-btn:hover {
+      background: rgba(0, 255, 0, 0.2);
+      box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    }
+    .lang-btn.active {
+      background: rgba(0, 255, 0, 0.3);
+      border-color: #00FF00;
+    }
+    .music-player {
+      position: fixed;
+      top: -9999px;
+      left: -9999px;
+      width: 0;
+      height: 0;
+      overflow: hidden;
+      z-index: -1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  
+  <div class="language-switcher">
+    <button class="lang-btn active" data-lang="tr">TR</button>
+    <button class="lang-btn" data-lang="en">EN</button>
+  </div>
+  
+  <div class="music-player">
+    <audio 
+      autoplay 
+      loop 
+      controls 
+      style="display: none;"
+      preload="auto"
+      muted>
+      <source src="https://ice1.somafm.com/groovesalad-128-mp3" type="audio/mpeg">
+      <source src="https://ice1.somafm.com/groovesalad-128-mp3" type="audio/ogg">
+      <source src="https://stream.radiojar.com/7csmg90fuqruv" type="audio/mpeg">
+      <source src="https://stream.radiojar.com/7csmg90fuqruv" type="audio/ogg">
+      Your browser does not support the audio element.
+    </audio>
+  </div>
+  
+  <div class="profile-container">
+    <div class="header">
+      <h1>XIPLAREX</h1>
+      <h2>Yazılım ve Web Cozumleri</h2>
+    </div>
+
+    <div class="main-table">
+      <div class="section">
+        <div class="section-header-table">
+          <h3>Biz Kimiz</h3>
+        </div>
+        <div class="section-content">
+          <p id="biz-kimiz-text">Kendi yazılım ve güvenlik şirketimi yönetmekteyim. Müşterilere özgün, güvenli ve ölçeklenebilir çözümler sunarak iş verimliliğini artırıyorum. Yeni teknolojileri hızlı öğrenir, güçlü takım çalışması ve iletişim becerilerine sahibim.</p>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header-table">
+          <h3>İnternet Geçmişi</h3>
+        </div>
+        <div class="section-content">
+          <div class="experience-item">
+            <h4>XiplareX Technology Yazılım ve Güvenlik Şirketi</h4>
+            <p><strong>Kuruculuk (2023)</strong></p>
+          </div>
+          <div class="experience-item">
+            <h4>TrendyolGO Kurye Uygulaması</h4>
+            <p>Geliştirme ve uygulama süreçleri</p>
+          </div>
+          <div class="experience-item">
+            <h4>Kababuk Üniversitesi İnternet Sitesi</h4>
+            <p>Güvenlik açıklarını kapatma ve sistem güvenliği sağlama</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header-table">
+          <h3>Yetenekler</h3>
+        </div>
+        <div class="section-content">
+          <div class="skill-category">
+            <p><strong># Yazılım geliştirme:</strong> Python, C#, JavaScript, Java</p>
+            <p><strong># Web teknolojileri:</strong> HTML5, CSS3, React, Node.js, REST API tasarımı</p>
+            <p><strong># Veritabanları:</strong> MySQL, PostgreSQL, MongoDB</p>
+            <p><strong># Ağ ve sistem güvenliği:</strong> Firewall yönetimi, IDS/IPS, VPN, sızma testi (Penetrasyon Testi)</p>
+            <p><strong># Sunucu ve altyapı yönetimi:</strong> Linux, Windows Server, Sanallaştırma (VMware, Hyper-V, Proxmox)</p>
+            <p><strong># DevOps ve otomasyon:</strong> Docker, Kubernetes, Jenkins, Ansible</p>
+            <p><strong># Kriptografi ve veri koruma teknikleri</strong></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-header-table">
+          <h3>İletişim</h3>
+        </div>
+        <div class="section-content">
+          <div class="contact-info">
+            <a href="https://wa.me/905444548444" target="_blank" class="contact-item">
+              <i>📱</i>
+              <span>WHATSAPP TIKLA</span>
+            </a>
+            <a href="https://t.me/xiplarex" target="_blank" class="contact-item">
+              <i>✈️</i>
+              <span>TELEGRAM TIKLA</span>
+            </a>
+            <a href="mailto:xiplarex@gmail.com" class="contact-item">
+              <i>📧</i>
+              <span>MAIL TIKLA</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const chars = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    const fontSize = 18;
+    const columns = Math.floor(canvas.width / fontSize);
+
+    const drops = [];
+    for (let x = 0; x < columns; x++) {
+      drops[x] = Math.random() * canvas.height / fontSize;
+    }
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.02)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.font = fontSize + "px monospace";
+      ctx.fillStyle = "#0F0";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 33);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Collapsible sections functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      // Radio functionality
+      const audio = document.querySelector('audio');
+      if (audio) {
+        // Try to play audio on user interaction
+        document.addEventListener('click', function() {
+          if (audio.paused) {
+            audio.muted = false;
+            audio.play().catch(e => console.log('Audio play failed:', e));
+          }
+        }, { once: true });
+        
+        // Also try on page load
+        audio.muted = false;
+        audio.play().catch(e => console.log('Initial audio play failed:', e));
+      }
+      
+      const sections = document.querySelectorAll('.section');
+      
+      // Make all sections start collapsed
+      sections.forEach(section => {
+        section.classList.add('collapsed');
+      });
+      
+      const headers = document.querySelectorAll('.section-header-table');
+      
+      headers.forEach(header => {
+        header.addEventListener('click', function() {
+          const section = this.parentElement;
+          const isCollapsed = section.classList.contains('collapsed');
+          
+          section.classList.toggle('collapsed');
+        });
+      });
+
+      // Language switcher functionality
+      const langButtons = document.querySelectorAll('.lang-btn');
+      const translations = {
+        tr: {
+          title: 'XiplareX - Profesyonel Profil',
+          subtitle: 'Yazılım ve Web Çözümleri',
+          about: 'Biz Kimiz',
+          experience: 'İnternet Geçmişi',
+          skills: 'Yetenekler',
+          contact: 'İletişim',
+          aboutText: 'Kendi yazılım ve güvenlik şirketimi yönetmekteyim. Müşterilere özgün, güvenli ve ölçeklenebilir çözümler sunarak iş verimliliğini artırıyorum. Yeni teknolojileri hızlı öğrenir, güçlü takım çalışması ve iletişim becerilerine sahibim.',
+          company: 'XiplareX Technology Yazılım ve Güvenlik Şirketi',
+          founding: 'Kuruculuk (2023)',
+          companyDesc: 'Kendi yazılım ve güvenlik şirketini kurma ve yönetme',
+          trendyol: 'TrendyolGO Kurye Uygulaması',
+          trendyolDesc: 'Geliştirme ve uygulama süreçleri',
+          university: 'Kababuk Üniversitesi İnternet Sitesi',
+          universityDesc: 'Güvenlik açıklarını kapatma ve sistem güvenliği sağlama',
+          softwareDev: '# Yazılım geliştirme:',
+          webTech: '# Web teknolojileri:',
+          databases: '# Veritabanları:',
+          networkSec: '# Ağ ve sistem güvenliği:',
+          serverInfra: '# Sunucu ve altyapı yönetimi:',
+          devOps: '# DevOps ve otomasyon:',
+          cryptography: '# Kriptografi ve veri koruma teknikleri',
+          whatsapp: 'WHATSAPP TIKLA',
+          telegram: 'TELEGRAM TIKLA',
+          email: 'MAIL TIKLA'
+        },
+        en: {
+          title: 'XiplareX - Professional Profile',
+          subtitle: 'Software and Web Solutions',
+          about: 'About Us',
+          experience: 'Experience',
+          skills: 'Skills',
+          contact: 'Contact',
+          aboutText: 'I manage my own software and security company. I increase business efficiency by providing unique, secure and scalable solutions to customers. I learn new technologies quickly and have strong teamwork and communication skills.',
+          company: 'XiplareX Technology Software and Security Company',
+          founding: 'Founding (2023)',
+          companyDesc: 'Establishing and managing own software and security company',
+          trendyol: 'TrendyolGO Courier Application',
+          trendyolDesc: 'Development and application processes',
+          university: 'Kababuk University Website',
+          universityDesc: 'Closing security vulnerabilities and ensuring system security',
+          softwareDev: '# Software Development:',
+          webTech: '# Web Technologies:',
+          databases: '# Databases:',
+          networkSec: '# Network and System Security:',
+          serverInfra: '# Server and Infrastructure Management:',
+          devOps: '# DevOps and Automation:',
+          cryptography: '# Cryptography and Data Protection Techniques',
+          whatsapp: 'WHATSAPP CLICK',
+          telegram: 'TELEGRAM CLICK',
+          email: 'EMAIL CLICK'
+        }
+      };
+
+      langButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+          const lang = this.getAttribute('data-lang');
+          
+          // Update active button
+          langButtons.forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Update content
+          document.title = translations[lang].title;
+          document.querySelector('.header h2').textContent = translations[lang].subtitle;
+          
+          // Update section headers
+          const headers = document.querySelectorAll('.section-header-table h3');
+          headers[0].textContent = translations[lang].about;
+          headers[1].textContent = translations[lang].experience;
+          headers[2].textContent = translations[lang].skills;
+          headers[3].textContent = translations[lang].contact;
+          
+          // Update about text
+          const aboutText = document.querySelector('#biz-kimiz-text');
+          if (aboutText) {
+            aboutText.textContent = translations[lang].aboutText;
+          }
+          
+          // Update experience items
+          const expItems = document.querySelectorAll('.experience-item h4');
+          expItems[0].textContent = translations[lang].company;
+          expItems[1].textContent = translations[lang].trendyol;
+          expItems[2].textContent = translations[lang].university;
+          
+          const expDescs = document.querySelectorAll('.experience-item p');
+          expDescs[0].innerHTML = `<strong>${translations[lang].founding}</strong>`;
+          expDescs[1].textContent = translations[lang].companyDesc;
+          expDescs[2].textContent = translations[lang].trendyolDesc;
+          expDescs[3].textContent = translations[lang].universityDesc;
+          
+          // Update skills
+          const skillItems = document.querySelectorAll('.skill-category p');
+          skillItems[0].innerHTML = `<strong>${translations[lang].softwareDev}</strong> Python, C#, JavaScript, Java`;
+          skillItems[1].innerHTML = `<strong>${translations[lang].webTech}</strong> HTML5, CSS3, React, Node.js, REST API design`;
+          skillItems[2].innerHTML = `<strong>${translations[lang].databases}</strong> MySQL, PostgreSQL, MongoDB`;
+          skillItems[3].innerHTML = `<strong>${translations[lang].networkSec}</strong> Firewall management, IDS/IPS, VPN, penetration testing`;
+          skillItems[4].innerHTML = `<strong>${translations[lang].serverInfra}</strong> Linux, Windows Server, Virtualization (VMware, Hyper-V, Proxmox)`;
+          skillItems[5].innerHTML = `<strong>${translations[lang].devOps}</strong> Docker, Kubernetes, Jenkins, Ansible`;
+          skillItems[6].innerHTML = `<strong>${translations[lang].cryptography}</strong>`;
+          
+          // Update contact buttons
+          const contactSpans = document.querySelectorAll('.contact-item span');
+          contactSpans[0].textContent = translations[lang].whatsapp;
+          contactSpans[1].textContent = translations[lang].telegram;
+          contactSpans[2].textContent = translations[lang].email;
+        });
+      });
+    });
+  </script>
+</body>
+</html>
